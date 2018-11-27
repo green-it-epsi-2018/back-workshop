@@ -2,10 +2,6 @@
 *	CONFIG
 */
 require('dotenv').config()
-//const REQUIRED_ENV = ['PAGE_URL', 'COOKIE_ZOPEID', 'COOKIE_AC', 'DURATION_TO_GET_IN_DAYS']
-/*if(REQUIRED_ENV.map((cookieKey) => process.env[cookieKey]).some((cookieValue) => cookieValue === undefined)){
-    throw `Erreur, les variables d'environnement suivantes sont nécessaires: ${REQUIRED_ENV.join(' , ')}`
-}*/
 
 /*
 *	MODULE LOADING
@@ -13,6 +9,8 @@ require('dotenv').config()
 const fs = require('fs')
 const axios = require('axios')
 const axiosRetry = require('axios-retry')
+
+const regexp = new RegExp('^N?(\\d+[a-zA-Z]*)');
 
 const HTTP_ERROR_CODES = [403, 404, 401]
 
@@ -23,7 +21,7 @@ axiosRetry(axios, { retries: process.env['HTTP_RETRY_COUNT'] || 3, retryConditio
         }
         return HTTP_ERROR_CODES.includes(data.response.status) || (""+data.response.status).startsWith(5)
     }});
-const cheerio = require('cheerio')
+const $ = require('cheerio')
 
 /*
  *	CONSTANTS CONFIGURATION
@@ -35,9 +33,9 @@ if(PAGE_URL === ""){
 main();
 
 function main(){
-    getUsernameFromCsv().forEach((user) =>{
-        writeToDb(getCalendarForUser(user));
-    });
+    writeToDb(getUsernameFromCsv().map((user) =>{
+        return getCalendarForUser(user);
+    }));
 }
 
 function getUsernameFromCsv(){
@@ -45,22 +43,41 @@ function getUsernameFromCsv(){
 }
 
 function getCalendarForUser(user){
-    let url = getUrlWithUser(user);
-    /*axios.get(PAGE_URL).then((response)=>{
-    	console.log(response);
-	});*/
+    return Promise.all(getUrlsWithUser(user).map((url)=>{
+        return axios.get(url).then((response)=>{
+            let arr = [];
+            $('.Ligne',response.data).each((index,element)=>{
+                let line = $(element).html();
+                arr.push({
+                    startDate:$('.Debut',line).text(),
+                    endDate:$('.Fin',line).text(),
+                    matiere:$('.Matiere',line).text(),
+                    salle:regexp.exec($('.Salle',line).text())[1],
+                    prof:$('.Prof',line).text()
+                });
+            });
+            return arr;
+        });
+    })).then((res)=>{
+        return res;
+    })
 }
 
-function getUrlWithUser(user){
-    let urlsForUser = PAGE_URL.replace('${username}',user);
+function getUrlsWithUser(user){
+    let urls = [];
+    let urlForUser = PAGE_URL.replace('${username}',user);
     let date = new Date();
-    let today = date.getDate() +'/'+ (date.getMonth()+1) +'/'+ date.getFullYear();
-    date.setDate(date.getDate()+60);
-    let endDate =  date.getDate() +'/'+ (date.getMonth()+1) +'/'+ date.getFullYear()
-    urlForUser = urlsForUser.replace('${date}',today);
-    console.log(urlForUser);
+    let resultDate;
+    let urlToAdd;
+    //FIXME add 60 days
+    for(let i =0;i<1;i++){
+        date.setDate(date.getDate()+1);
+        resultDate = (date.getMonth()+1) +'/'+date.getDate() +'/'+  date.getFullYear();
+        urlToAdd = urlForUser.replace('${date}',resultDate);
+        urls.push(urlToAdd)
+    }
+    return(urls);
 }
 
-function writeToDb(){
-    return null;
+function writeToDb(documents){
 }
