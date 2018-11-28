@@ -38,10 +38,10 @@ function getLines(elements, promo, date) {
         arr.push({
             startDate: getTimestamp($('.Debut', line).text(), date),
             endDate: getTimestamp($('.Fin', line).text(), date),
-            matiere: $('.Matiere', line).text(),
+            matiere: $('.Matiere', line).text().replace(/[^a-zA-Z0-9 ]/g, ""),
             salle: regexp.exec($('.Salle', line).text())[1],
-            prof: $('.Prof', line).text(),
-            promo: promo
+            prof: $('.Prof', line).text().replace(/[^a-zA-Z0-9 ]/g, ""),
+            promo: promo.replace(/[^a-zA-Z0-9 ]/g, "")
         });
     });
     return arr;
