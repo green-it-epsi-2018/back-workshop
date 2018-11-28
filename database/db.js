@@ -15,10 +15,10 @@ db.serialize(function () {
 });
 
 //insert function
-insert = function (startDate, endDate, matiere, salle, prof, promo,NumeroEtage) {
+insert = function (startDate, endDate, matiere, salle, prof, promo,etage) {
     db.serialize(function () {
         db.run(
-            `INSERT into HEP(DateDebut,DateFin, Matiere,NumeroSalle,Intervenant,Promo,NumeroEtage) VALUES (${startDate},${endDate},"${matiere}","${salle}", "${prof}", "${promo}",${NumeroEtage} )`
+            `INSERT into HEP(DateDebut,DateFin, Matiere,NumeroSalle,Intervenant,Promo,NumeroEtage) VALUES (${startDate},${endDate},"${matiere}","${salle}", "${prof}", "${promo}",${etage} )`
         );
     });
 };

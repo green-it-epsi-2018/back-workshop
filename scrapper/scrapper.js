@@ -12,7 +12,7 @@ const regexp = new RegExp('^N?(\\d+[a-zA-Z]*)');
 
 const $ = require('cheerio')
 const HOURS_SCRAP = 4;
-const MAX_DAYS = 1;
+const MAX_DAYS = 5;
 
 /*
  *	CONSTANTS CONFIGURATION
