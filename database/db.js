@@ -16,6 +16,15 @@ db.serialize(function () {
 
 //insert function
 insert = function (startDate, endDate, matiere, salle, prof, promo) {
+    console.log("--------------------------------------");
+
+    console.log("startDate" + startDate);
+    console.log("endDate" + endDate);
+    console.log("matiere" + matiere);
+    console.log("salle" + salle);
+    console.log("prof" + prof);
+    console.log("promo" + promo);
+
     let db = new sqlite3.Database("database/databaseScrapper.db");
     db.serialize(function () {
         db.run(
