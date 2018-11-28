@@ -2,7 +2,7 @@ const sqlite3 = require('sqlite3').verbose();
 
 
 // open the database
-let db = new sqlite3.Database('/Users/Tshili/Documents/Project/back-workshop/database/databaseScrapper.db');
+let db = new sqlite3.Database('database/databaseScrapper.db');
 
 
 // Create Table  
@@ -12,9 +12,7 @@ db.serialize(function () {
 
 // insert function 
 insert = function () {
-
     let db = new sqlite3.Database('/Users/Tshili/Documents/Project/back-workshop/database/databaseScrapper.db');
-
     db.serialize(function () {
         db.run("INSERT into HEP(Promo,Intervenant,NumeroSalle,NumeroEtage, Matiere) VALUES ('I5','Bernard',200,2, 'pilotage de  projet')");
         db.run("INSERT into HEP(Promo,Intervenant, NumeroSalle,NumeroEtage, Matiere) VALUES ('Wiz','Hugo',300,3,'Gestion de projet')");
