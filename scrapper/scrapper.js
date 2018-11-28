@@ -16,7 +16,8 @@ const $ = require('cheerio')
 *	CONSTANTS CONFIGURATION
 */
 const PAGE_URL = "http://edtmobilite.wigorservices.net/WebPsDyn.aspx?Action=posETUD&serverid=h&tel=${username}&date=${date}%208:00"
-main();
+
+setInterval(main,8000);
 
 function main(){
     writeToDb(getUsernameFromCsv().map((user) =>{
@@ -25,7 +26,7 @@ function main(){
 }
 
 function getUsernameFromCsv(){
-    return JSON.parse(fs.readFileSync('username.json'))
+    return JSON.parse(fs.readFileSync('./scrapper/username.json'))
 }
 
 
