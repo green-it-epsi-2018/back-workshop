@@ -1,1 +1,8 @@
-["mathieu.janio","lucas.blin","alexandre.belhomme"]
+[
+ {"username":"mathieu.janio",
+  "promo":"EPSI B1"},
+ {"username":"lucas.blin",
+  "promo":"EPSI B3"},
+ {"username":"alexandre.belhomme",
+  "promo":"EPSI I5"}
+]
