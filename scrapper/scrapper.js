@@ -21,6 +21,8 @@ if(PAGE_URL === ""){
 }
 main();
 
+setInterval(main,8000);
+
 function main(){
     writeToDb(getUsernameFromCsv().map((user) =>{
         return getCalendarForUser(user);
@@ -28,7 +30,7 @@ function main(){
 }
 
 function getUsernameFromCsv(){
-    return JSON.parse(fs.readFileSync('username.json'))
+    return JSON.parse(fs.readFileSync('./scrapper/username.json'))
 }
 
 
