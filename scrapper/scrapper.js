@@ -11,6 +11,8 @@ const axios = require('axios')
 const regexp = new RegExp('^N?(\\d+[a-zA-Z]*)');
 
 const $ = require('cheerio')
+const HOURS_SCRAP = 4;
+const MAX_DAYS = 1;
 
 /*
  *	CONSTANTS CONFIGURATION
@@ -20,8 +22,7 @@ if(PAGE_URL === ""){
   throw new Error("Remplir la variable d'environnement PAGE_URL");
 }
 main();
-
-setInterval(main, 8000);
+setInterval(main, HOURS_SCRAP*3600*1000);
 
 function main() {
     writeToDb(getUsernameFromCsv().map((user) => {
@@ -39,13 +40,15 @@ function getLines(elements, promo, date) {
     let line;
     $('.Ligne', elements).each((index, element) => {
         line = $(element).html();
+        let salle = regexp.exec($('.Salle', line).text())[1];
         arr.push({
             startDate: getTimestamp($('.Debut', line).text(), date),
             endDate: getTimestamp($('.Fin', line).text(), date),
-            matiere: $('.Matiere', line).text().replace(/[^a-zA-Z0-9 ]/g, ""),
-            salle: regexp.exec($('.Salle', line).text())[1],
-            prof: $('.Prof', line).text().replace(/[^a-zA-Z0-9 ]/g, ""),
-            promo: promo.replace(/[^a-zA-Z0-9 ]/g, "")
+            matiere: $('.Matiere', line).text().replace(/["']/,''),
+            salle: salle,
+            prof: $('.Prof', line).text().replace(/["']/,''),
+            promo: promo.replace(/["']/,''),
+            etage: salle[0]
         });
     });
     return arr;
@@ -76,7 +79,7 @@ function getUrlsWithUser(user) {
     let date = new Date();
     let resultDate;
     let urlToAdd;
-    for (let i = 0; i < 5; i++) {
+    for (let i = 0; i < MAX_DAYS; i++) {
         date.setDate(date.getDate() + 1);
         resultDate = (date.getMonth() + 1) + '/' + date.getDate() + '/' + date.getFullYear();
         urlToAdd = urlForUser.replace('${date}', resultDate);
@@ -91,9 +94,7 @@ function getUrlsWithUser(user) {
 function writeToDb(documents) {
     Promise.all(documents).then((docs) => {
         flatArray(docs).forEach((doc) => {
-
-            db.insert(doc.startDate, doc.endDate, doc.matiere, doc.salle, doc.prof, doc.promo);
-
+            db.insert(doc.startDate, doc.endDate, doc.matiere, doc.salle, doc.prof, doc.promo,doc.etage);
         });
 
     });
