@@ -11,9 +11,6 @@ db.serialize(function () {
 });
 
 // insert function 
-
-
-
 insert = function () {
 
     let db = new sqlite3.Database('/Users/Tshili/Documents/Project/back-workshop/database/databaseScrapper.db');
@@ -27,7 +24,6 @@ insert = function () {
 
 
 // Tout le batiment 
-
 getAll = function () {
 
     let db = new sqlite3.Database('/Users/Tshili/Documents/Project/back-workshop/database/databaseScrapper.db');
@@ -37,6 +33,8 @@ getAll = function () {
             if (err) {
                 reject(err)
             } else {
+
+
                 resolve(rows);
 
             }
@@ -46,31 +44,19 @@ getAll = function () {
 
 
 
-
-
-
-
-
-
-
 // get by room 
 getByRoom = function (numSalle) {
 
     let db = new sqlite3.Database('/Users/Tshili/Documents/Project/back-workshop/database/databaseScrapper.db');
-
-
     return new Promise((resolve, reject) => {
         let sql = `SELECT *
         FROM HEP
         WHERE NumeroSalle  = ?`;
         let rooomName = numSalle;
 
-        // first row only
-        db.get(sql, [rooomName], (err, row) => {
+        db.all(sql, [rooomName], (err, row) => {
             if (err) {
-                console.log("the error of getClasse is :  " + err);
                 reject(err)
-                //return console.error(err.message);
             }
             console.log("the row is : " + JSON.stringify(row));
             resolve(row);
@@ -92,29 +78,19 @@ getByLevel = function (floor) {
 
     return new Promise((resolve, reject) => {
 
-        let sql = `SELECT *
-    FROM HEP
-    WHERE NumeroEtage  = ?`;
+        let sql = `SELECT * FROM HEP WHERE NumeroEtage  = ?`;
         let floorNUmber = floor;
 
-        // first row only
-        db.get(sql, [floorNUmber], (err, row) => {
-            if (err) {
-                console.log("the error of getClasse is :  " + err);
-                reject(err);
-
-            }
-            console.log("the row is : " + JSON.stringify(row));
-
-            resolve(row)
-
-
-
-        });
+        db.all(sql, [floorNUmber],
+            function (err, row) {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve(row)
+                }
+            });
 
     })
-
-
 
 }
 
