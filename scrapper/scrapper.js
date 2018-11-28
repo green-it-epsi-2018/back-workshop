@@ -25,13 +25,16 @@ main();
 setInterval(main, HOURS_SCRAP*3600*1000);
 
 function main() {
+  console.log("Began scrapping");
     writeToDb(getUsernameFromCsv().map((user) => {
         return getCalendarForUser(user);
     }));
 }
 
 function getUsernameFromCsv() {
-    return JSON.parse(fs.readFileSync('./scrapper/username.json'))
+  const users = JSON.parse(fs.readFileSync('./scrapper/username.json'))
+  console.log(`${users.length} users fetched from csv`)
+    return users
 }
 
 
@@ -64,6 +67,7 @@ function getTimestamp(hour, dateString) {
 }
 
 function getCalendarForUser(user) {
+  console.log(`Getting calendar for user ${user.username}`)
     return Promise.all(getUrlsWithUser(user.username).map((result) => {
         return axios.get(result.url).then((response) => {
             return getLines(response.data, user.promo, result.date);
@@ -93,6 +97,7 @@ function getUrlsWithUser(user) {
 
 function writeToDb(documents) {
     Promise.all(documents).then((docs) => {
+      console.log(`All document fetched (${docs.length}), writing to database`)
         flatArray(docs).forEach((doc) => {
             db.insert(doc.startDate, doc.endDate, doc.matiere, doc.salle, doc.prof, doc.promo,doc.etage);
         });
