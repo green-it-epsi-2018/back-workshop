@@ -2,7 +2,7 @@
 *	CONFIG
 */
 require('dotenv').config()
-
+const db = require('../database/db.js')
 /*
 *	MODULE LOADING
 */
@@ -32,13 +32,14 @@ function getUsernameFromCsv(){
 }
 
 
-function getLines(elements,promo){
+function getLines(elements,promo,date){
     let arr = [];
+    let line;
     $('.Ligne',elements).each((index,element)=>{
-        let line = $(element).html();
+        line = $(element).html();
         arr.push({
-            startDate:$('.Debut',line).text(),
-            endDate:$('.Fin',line).text(),
+            startDate:getTimestamp($('.Debut',line).text(),date),
+            endDate:getTimestamp($('.Fin',line).text(),date),
             matiere:$('.Matiere',line).text(),
             salle:regexp.exec($('.Salle',line).text())[1],
             prof:$('.Prof',line).text(),
@@ -47,10 +48,20 @@ function getLines(elements,promo){
     });
     return arr;
 }
+
+
+function getTimestamp(hour,dateString){
+    let hourArray = hour.split(':');
+    let date = new Date(dateString);
+    date.setHours(hourArray[0])
+    date.setMinutes(hourArray[1]);
+    return date.getTime();
+}
+
 function getCalendarForUser(user){
-    return Promise.all(getUrlsWithUser(user.username).map((url)=>{
-        return axios.get(url).then((response)=>{
-           return getLines(response.data,user.promo);
+    return Promise.all(getUrlsWithUser(user.username).map((result)=>{
+        return axios.get(result.url).then((response)=>{
+            return getLines(response.data,user.promo,result.date);
         });
     })).then((res)=>{
         return flatArray(res);
@@ -63,19 +74,25 @@ function getUrlsWithUser(user){
     let date = new Date();
     let resultDate;
     let urlToAdd;
-    //FIXME add 60 days
     for(let i =0;i<5;i++){
         date.setDate(date.getDate()+1);
         resultDate = (date.getMonth()+1) +'/'+date.getDate() +'/'+  date.getFullYear();
         urlToAdd = urlForUser.replace('${date}',resultDate);
-        urls.push(urlToAdd)
+        urls.push({url:urlToAdd,date:resultDate});
     }
     return(urls);
 }
 
 function writeToDb(documents){
-    Promise.all(documents).then((doc) => {
-        console.log(flatArray(doc));
+    Promise.all(documents).then((docs) => {
+        flatArray(docs).forEach((doc)=>{
+            console.log(doc);
+            db.insert(doc);
+            db.getAll().then((result)=>{
+                //console.log(result);
+            });
+        });
+
     });
 }
 
