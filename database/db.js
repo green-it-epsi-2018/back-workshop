@@ -164,7 +164,7 @@ insertInformation = function () {
 
     db.run(
         `INSERT INTO INFORMATION(INFORMATION, IMAGE) VALUES(?,?)`,
-        ["Un workshop est un mot anglais qui désigne un atelier axé sur un thème de travail au sein d'un congrès ou d'un salon professionnel. La présence du suffixe -shop induit en erreur et peut faire penser à un commerce", null],
+        ["Un workshop est un mot anglais qui désigne un atelier axé sur un thème de travail au sein d'un congrès ou d'un salon professionnel. La présence du suffixe -shop induit en erreur et peut faire penser à un commerce", ''],
         function (err) {
             if (err) {
                 return console.log("iam error : " + err.message);

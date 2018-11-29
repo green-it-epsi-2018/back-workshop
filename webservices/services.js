@@ -31,7 +31,6 @@ app.get('/data/information', (req, res) => {
             data.push(db.insertInformation());
             res.send(data);
         } else {
-            console.log("information is not empty")
             res.send(data)
         }
     }).catch(err => console.log("eeeeeerrrrr : " + err));
