@@ -61,9 +61,8 @@ function getLines(elements, promo, date) {
 
 function getTimestamp(hour, dateString) {
     let hourArray = hour.split(':');
-    let date = new Date(dateString);
-    date.setHours(hourArray[0])
-    date.setMinutes(hourArray[1]);
+    const dateElements = dateString.split('/')
+    let date = new Date(dateElements[2], (+dateElements[0]) - 1, dateElements[1], hourArray[0], hourArray[1]);
     return date.getTime();
 }
 
@@ -82,7 +81,7 @@ function getUrlsWithUser(user) {
     let urls = [];
     let urlForUser = PAGE_URL.replace('${username}', user);
     const currentDate = new Date()
-    let date = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate() - currentDate.getDay() + 1);
+    let date = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate() - currentDate.getDay());
     console.log(`scrapping week from ${date.toLocaleDateString()}`)
     let resultDate;
     let urlToAdd;
@@ -95,7 +94,7 @@ function getUrlsWithUser(user) {
             date: resultDate
         });
     }
-    return (urls);
+    return urls
 }
 
 function writeToDb(documents) {
