@@ -100,22 +100,7 @@ function writeToDb(documents) {
     Promise.all(documents).then((docs) => {
         console.log(`All document fetched (${docs.length}), writing to database`)
         flatArray(docs).forEach((doc) => {
-            //if (db.getAll.length == 0) {
-            console.log("-------------------");
-            console.log("startDate : " + doc.startDate);
-            console.log("endDate : " + doc.endDate);
-            console.log("matiere : " + doc.matiere);
-            console.log("salle : " + doc.salle);
-            console.log("prof : " + doc.prof);
-            console.log("promo : " + doc.promo);
-            console.log("etage : " + doc.etage);
-
-
             db.insert(doc.startDate, doc.endDate, doc.matiere, doc.salle, doc.prof, doc.promo, doc.etage);
-
-
-            //}
-
         });
 
     }).catch(err => console.log("writeToDb  " + err));
