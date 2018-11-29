@@ -81,7 +81,9 @@ function getCalendarForUser(user) {
 function getUrlsWithUser(user) {
     let urls = [];
     let urlForUser = PAGE_URL.replace('${username}', user);
-    let date = new Date();
+    const currentDate = new Date()
+    let date = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate() - currentDate.getDay() + 1);
+    console.log(`scrapping week from ${date.toLocaleDateString()}`)
     let resultDate;
     let urlToAdd;
     for (let i = 0; i < MAX_DAYS; i++) {
