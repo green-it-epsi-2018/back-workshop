@@ -94,7 +94,7 @@ function getUrlsWithUser(user) {
             date: resultDate
         });
     }
-    console.log(urls)
+    return urls
 }
 
 function writeToDb(documents) {
