@@ -96,7 +96,7 @@ getAllInformation = function () {
             if (err) {
                 reject(err);
             } else {
-                console.log("getAllInformation length is : " + rows.length);
+
 
                 resolve(rows);
             }
@@ -112,18 +112,11 @@ function base64_encode(file) {
     return new Buffer(bitmap).toString('base64');
 }
 
-
 var base64strCampus = base64_encode('Pics/campus.jpg');
 var base64strWk = base64_encode('Pics/wk.jpg');
 var base64strWk2 = base64_encode('Pics/wk2.jpg');
 
-
-
 insertInformation = function () {
-
-    console.log("getAllInformation is equal to zero " + getAllInformation.length);
-
-
     //Insert information into database
     db.run(
         `INSERT INTO INFORMATION(INFORMATION, IMAGE) VALUES(?,?)`,
@@ -132,7 +125,7 @@ insertInformation = function () {
             if (err) {
                 return console.log("iam error : " + err.message);
             }
-            console.log("insert information  is OK ");
+
         }
     );
 
@@ -144,7 +137,7 @@ insertInformation = function () {
             if (err) {
                 return console.log("iam error : " + err.message);
             }
-            console.log("insert information  is OK ");
+
         }
     );
 
@@ -156,7 +149,7 @@ insertInformation = function () {
             if (err) {
                 return console.log("iam error : " + err.message);
             }
-            console.log("insert information  is OK ");
+
         }
     );
 
@@ -169,7 +162,7 @@ insertInformation = function () {
             if (err) {
                 return console.log("iam error : " + err.message);
             }
-            console.log("insert information  is OK ");
+
         }
     );
 
