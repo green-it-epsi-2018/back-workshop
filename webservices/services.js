@@ -23,9 +23,18 @@ app.get('/data/room/:roomNumber', (req, res) => {
 
 
 app.get('/data/information', (req, res) => {
-    console.log("Get information")
-    db.getAllInformation().then((data) =>
-        res.send(data)).catch(err => console.log("eeeeeerrrrr : " + err));
+
+    db.getAllInformation().then((data) => {
+        if (data.length == 0) {
+            console.log("iam the db.insertInformation() " + db.insertInformation());
+
+            data.push(db.insertInformation());
+            res.send(data);
+        } else {
+            console.log("information is not empty")
+            res.send(data)
+        }
+    }).catch(err => console.log("eeeeeerrrrr : " + err));
 });
 
 
