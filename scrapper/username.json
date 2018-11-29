@@ -1,8 +1,45 @@
-[
- {"username":"mathieu.janio",
-  "promo":"EPSI B1"},
- {"username":"lucas.blin",
-  "promo":"EPSI B3"},
- {"username":"alexandre.belhomme",
-  "promo":"EPSI I5"}
+[{
+      "username": "mathieu.janio",
+      "promo": "EPSI B2"
+   },
+   {
+      "username": "lucas.blin",
+      "promo": "EPSI B3"
+   },
+   {
+      "username": "alexandre.belhomme",
+      "promo": "EPSI I5"
+   },
+   {
+      "username": "bastien.bourven",
+      "promo": "IDRAC B1"
+   },
+   {
+      "username": "antoine.bertin",
+      "promo": "IDRAC B2"
+   },
+   {
+      "username": "carla.bonneau",
+      "promo": "IDRAC B3"
+   },
+   {
+      "username": "fanny.bouvet",
+      "promo": "IDRAC I4"
+   },
+   {
+      "username": "quentin.billoir",
+      "promo": "IDRAC I5"
+   },
+   {
+      "username": "louis.chabbert",
+      "promo": "IFAG B3"
+   },
+   {
+      "username": "sarah.giraudineau",
+      "promo": "IFAG MECP"
+   },
+   {
+      "username": "lea.jarny",
+      "promo": "IFAG ROA"
+   }
 ]

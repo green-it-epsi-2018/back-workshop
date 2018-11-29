@@ -11,22 +11,31 @@ const axios = require('axios')
 const regexp = new RegExp('^N?(\\d+[a-zA-Z]*)');
 
 const $ = require('cheerio')
+const HOURS_SCRAP = 4;
+const MAX_DAYS = 5;
 
 /*
  *	CONSTANTS CONFIGURATION
  */
-const PAGE_URL = "http://edtmobilite.wigorservices.net/WebPsDyn.aspx?Action=posETUD&serverid=h&tel=${username}&date=${date}%208:00"
-
-setInterval(main, 8000);
+const PAGE_URL = process.env.PAGE_URL || "" // to fill in local
+if (PAGE_URL === "") {
+    throw new Error("Remplir la variable d'environnement PAGE_URL");
+}
+main();
+setInterval(main, HOURS_SCRAP * 3600 * 1000);
 
 function main() {
+    console.log("Began scrapping");
+    db.deleteAll()
     writeToDb(getUsernameFromCsv().map((user) => {
         return getCalendarForUser(user);
     }));
 }
 
 function getUsernameFromCsv() {
-    return JSON.parse(fs.readFileSync('./scrapper/username.json'))
+    const users = JSON.parse(fs.readFileSync('./scrapper/username.json'))
+    console.log(`${users.length} users fetched from csv`)
+    return users
 }
 
 
@@ -35,13 +44,15 @@ function getLines(elements, promo, date) {
     let line;
     $('.Ligne', elements).each((index, element) => {
         line = $(element).html();
+        let salle = regexp.exec($('.Salle', line).text())[1];
         arr.push({
             startDate: getTimestamp($('.Debut', line).text(), date),
             endDate: getTimestamp($('.Fin', line).text(), date),
-            matiere: $('.Matiere', line).text().replace(/[^a-zA-Z0-9 ]/g, ""),
-            salle: regexp.exec($('.Salle', line).text())[1],
-            prof: $('.Prof', line).text().replace(/[^a-zA-Z0-9 ]/g, ""),
-            promo: promo.replace(/[^a-zA-Z0-9 ]/g, "")
+            matiere: $('.Matiere', line).text().replace(/["']/, ''),
+            salle: salle,
+            prof: $('.Prof', line).text().replace(/["']/, ''),
+            promo: promo.replace(/["']/, ''),
+            etage: salle[0]
         });
     });
     return arr;
@@ -57,6 +68,7 @@ function getTimestamp(hour, dateString) {
 }
 
 function getCalendarForUser(user) {
+    console.log(`Getting calendar for user ${user.username}`)
     return Promise.all(getUrlsWithUser(user.username).map((result) => {
         return axios.get(result.url).then((response) => {
             return getLines(response.data, user.promo, result.date);
@@ -72,7 +84,7 @@ function getUrlsWithUser(user) {
     let date = new Date();
     let resultDate;
     let urlToAdd;
-    for (let i = 0; i < 5; i++) {
+    for (let i = 0; i < MAX_DAYS; i++) {
         date.setDate(date.getDate() + 1);
         resultDate = (date.getMonth() + 1) + '/' + date.getDate() + '/' + date.getFullYear();
         urlToAdd = urlForUser.replace('${date}', resultDate);
@@ -86,13 +98,27 @@ function getUrlsWithUser(user) {
 
 function writeToDb(documents) {
     Promise.all(documents).then((docs) => {
+        console.log(`All document fetched (${docs.length}), writing to database`)
         flatArray(docs).forEach((doc) => {
+            //if (db.getAll.length == 0) {
+            console.log("-------------------");
+            console.log("startDate : " + doc.startDate);
+            console.log("endDate : " + doc.endDate);
+            console.log("matiere : " + doc.matiere);
+            console.log("salle : " + doc.salle);
+            console.log("prof : " + doc.prof);
+            console.log("promo : " + doc.promo);
+            console.log("etage : " + doc.etage);
 
-            db.insert(doc.startDate, doc.endDate, doc.matiere, doc.salle, doc.prof, doc.promo);
+
+            db.insert(doc.startDate, doc.endDate, doc.matiere, doc.salle, doc.prof, doc.promo, doc.etage);
+
+
+            //}
 
         });
 
-    });
+    }).catch(err => console.log("writeToDb  " + err));
 }
 
 
