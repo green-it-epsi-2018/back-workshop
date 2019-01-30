@@ -1,6 +1,9 @@
-module.exports = class EventsDatabase{
+const {Database} = require('./common_database');
+const fs = require('fs')
+
+module.exports = class EventsDatabase extends Database{
     constructor(db){
-        this.db = db;
+        super(db);
     }
     
     //insert event
@@ -94,9 +97,9 @@ module.exports = class EventsDatabase{
     }
 
     insertInformation () {
-        var base64strCampus = base64_encode('Pics/campus.jpg');
-        var base64strWk = base64_encode('Pics/wk.jpg');
-        var base64strWk2 = base64_encode('Pics/wk2.jpg');
+        var base64strCampus = this.base64_encode('Pics/campus.jpg');
+        var base64strWk = this.base64_encode('Pics/wk.jpg');
+        var base64strWk2 = this.base64_encode('Pics/wk2.jpg');
 
         //Insert information into database
         this.db.run(

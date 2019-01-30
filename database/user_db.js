@@ -8,7 +8,7 @@ class UserDatabaseError extends DatabaseError{
     }
 }
 
-class UserDatabase extends Database{
+module.exports = class UserDatabase extends Database{
     constructor(db){
         super(db)
     }
@@ -56,5 +56,3 @@ class UserDatabase extends Database{
         }
     }
 }
-
-module.exports = UserDatabase;
