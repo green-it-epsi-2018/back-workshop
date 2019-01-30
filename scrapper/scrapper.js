@@ -2,7 +2,8 @@
  *	CONFIG
  */
 require('dotenv').config()
-const db = require('../database/db.js')
+
+const EventsDatabase = require('../database/events_db');
 /*
  *	MODULE LOADING
  */
@@ -21,13 +22,17 @@ const PAGE_URL = process.env.PAGE_URL || "" // to fill in local
 if (PAGE_URL === "") {
     throw new Error("Remplir la variable d'environnement PAGE_URL");
 }
-main();
-setInterval(main, HOURS_SCRAP * 3600 * 1000);
 
-function main() {
+module.exports = db => {
+    db = new EventsDatabase(db);
+    main(db);
+    setInterval(main, HOURS_SCRAP * 3600 * 1000);
+}
+
+function main(db) {
     console.log("Began scrapping");
     db.deleteAll()
-    writeToDb(getUsernameFromCsv().map((user) => {
+    writeToDb(db, getUsernameFromCsv().map((user) => {
         return getCalendarForUser(user);
     }));
 }
@@ -97,7 +102,7 @@ function getUrlsWithUser(user) {
     return urls
 }
 
-function writeToDb(documents) {
+function writeToDb(db, documents) {
     Promise.all(documents).then((docs) => {
         console.log(`All document fetched (${docs.length}), writing to database`)
         flatArray(docs).forEach((doc) => {
